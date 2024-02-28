@@ -1,0 +1,14 @@
+make: Nothing to be done for 'all'.
+Prcoess 1 of 4 is on, X_limit is 10, Y_limit is 10 
+This is process 1, at first data1-1 is 1 
+Prcoess 2 of 4 is on, X_limit is 10, Y_limit is 10 
+This is process 2, at first data1-1 is 2 
+This is process 2, now data2-1 is 0 
+Prcoess 0 of 4 is on, X_limit is 10, Y_limit is 10 
+This is process 0, at first data1-1 is 0 
+This is process 0, now data2-1 is 0 
+Prcoess 3 of 4 is on, X_limit is 10, Y_limit is 10 
+This is process 3, at first data1-1 is 3 
+This is process 3, now data2-1 is 0 
+This is process 1, now data2-1 is 0 
+This is process 0, final data2-1 is 122631632 
