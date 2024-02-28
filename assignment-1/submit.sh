@@ -17,5 +17,5 @@ module load openmpi/gcc
 # Run the executable
 #mpirun -np 4 ./life-blocking life.1.512x512.data 500 512 512 &> blocking.out
 #cat blocking.out
-mpirun -np 4 ./life-nonblocking life.1.512x512.data 500 512 512 &> nonblocking.out
+mpirun -np 128 ./life-nonblocking life.1.512x512.data 500 512 512 &> nonblocking.out
 cat nonblocking.out

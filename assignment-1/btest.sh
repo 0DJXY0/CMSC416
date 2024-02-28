@@ -7,6 +7,7 @@
 #SBATCH --exclusive
 
 make
+rm life.1.512x512.500.csv
 # This is to suppress the warning about not finding a GPU resource
 export OMPI_MCA_mpi_cuda_support=0
 
@@ -14,5 +15,5 @@ export OMPI_MCA_mpi_cuda_support=0
 module load openmpi/gcc
 
 # Run the executable
-mpirun -np 4 ./btestcode life.1.256x256.data 100 256 256 &> testcode.out
-cat testcode.out
+mpirun -np 8 ./btestcode life.1.512x512.data 500 512 512 &> btestcode.out
+cat btestcode.out

@@ -120,12 +120,15 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     interval = X_limit/numprocs;
     MPI_Status status;
-    MPI_Request requests[2], req;
+    MPI_Request requests[4];
     int *sendbuf = (int*)malloc(X_limit*Y_limit*sizeof(int));
     int rbuf[interval*Y_limit];
     int ind;
     double starttime, endtime, localtime;
-        
+    for (int i = 0; i < 4; i++) {
+      requests[i] = MPI_REQUEST_NULL;
+    }
+
     if (myid ==0){
       int **life = new int *[X_limit];
       for (int i = 0; i < X_limit; i++) {
@@ -173,20 +176,22 @@ int main(int argc, char *argv[]) {
     
     for (int numg = 0; numg < num_of_generations; numg++) {
       if (myid!=0){
-	MPI_Irecv(data2, Y_limit, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[2]);
-	MPI_Isend(block[0], Y_limit, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[2]);
+	MPI_Irecv(data2, Y_limit, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[0]);
+	MPI_Isend(block[0], Y_limit, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[1]);
       }
       if (myid!=numprocs-1){
-	MPI_Irecv(data1, Y_limit, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[1]);
-	MPI_Isend(block[interval-1], Y_limit, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[1]);
+	MPI_Irecv(data1, Y_limit, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[2]);
+	MPI_Isend(block[interval-1], Y_limit, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[3]);
       }
       if (myid!=numprocs-1){
-	MPI_Wait(&requests[1],MPI_SUCCESS);
+	MPI_Wait(&requests[2],MPI_SUCCESS);
+	MPI_Wait(&requests[3],MPI_SUCCESS);
 	for (int i = 0; i < Y_limit; i++) {
 	  previous_block[interval+1][i+1] = data1[i];}
       }
       if (myid!=0){
-	MPI_Wait(&requests[2],MPI_SUCCESS);
+	MPI_Wait(&requests[0],MPI_SUCCESS);
+	MPI_Wait(&requests[1],MPI_SUCCESS);
 	for (int i = 0; i < Y_limit; i++) {
 	  previous_block[0][i+1] = data2[i];}
       }     
