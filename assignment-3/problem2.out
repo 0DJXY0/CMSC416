@@ -1,0 +1,12 @@
+Number of threads is 1
+Time: 0.02920
+Number of threads is 2
+Time: 0.01573
+Number of threads is 4
+Time: 0.01529
+Number of threads is 8
+Time: 0.01449
+Number of threads is 16
+Time: 0.01426
+Number of threads is 32
+Time: 0.01580

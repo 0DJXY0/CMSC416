@@ -1,0 +1,24 @@
+Number of threads is 1
+True Product: 1.00003
+Product: 1.00003
+Time: 0.07227
+Number of threads is 2
+True Product: 1.00003
+Product: 1.00003
+Time: 0.03656
+Number of threads is 4
+True Product: 1.00003
+Product: 1.00003
+Time: 0.02468
+Number of threads is 8
+True Product: 1.00003
+Product: 1.00003
+Time: 0.02489
+Number of threads is 16
+True Product: 1.00003
+Product: 1.00003
+Time: 0.02260
+Number of threads is 32
+True Product: 1.00003
+Product: 1.00003
+Time: 0.02151

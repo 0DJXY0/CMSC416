@@ -3,7 +3,6 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
-#include <omp.h>
 
 /* Count the number of edges in the directed graph defined by the adjacency
    matrix A. A is an NxN adjacency matrix stored in row-major. A represents a
@@ -51,24 +50,12 @@ int main(int argc, char **argv) {
         }
     }
 
-    //int true_count = edgeCount(A, N);
-    //double totalTime = 0.0;
-    //double start = omp_get_wtime();
-    
-    
-    int count = 0;
-    #pragma omp parallel for reduction(+:count)
-    for (size_t i = 0; i < N; i += 1) {
-        for (size_t j = 0; j < N; j += 1) {
-            if (A[i * N + j] == 1) {
-                count++;
-            }
-        }
-    }
-    
-    printf("Count : %d\n", count);
-    //printf("True Count : %d\n", true_count);
+    // double totalTime = 0.0;
+    // double start = omp_get_wtime();
 
-    //totalTime = omp_get_wtime() - start;
-    //printf("Time: %.5f\n", totalTime);
+    int count = edgeCount(A, N);
+    printf("Count : %d\n", count);
+
+    // totalTime = omp_get_wtime() - start;
+    // printf("Time: %.5f\n", totalTime);
 }

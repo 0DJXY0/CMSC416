@@ -51,10 +51,9 @@ int main(int argc, char **argv) {
         }
     }
 
-    //int true_count = edgeCount(A, N);
-    //double totalTime = 0.0;
-    //double start = omp_get_wtime();
-    
+    // double totalTime = 0.0;
+    // double start = omp_get_wtime();
+    int true_count = edgeCount(A, N);
     
     int count = 0;
     #pragma omp parallel for reduction(+:count)
@@ -67,8 +66,8 @@ int main(int argc, char **argv) {
     }
     
     printf("Count : %d\n", count);
-    //printf("True Count : %d\n", true_count);
+    printf("True Count : %d\n", true_count);
 
-    //totalTime = omp_get_wtime() - start;
-    //printf("Time: %.5f\n", totalTime);
+    // totalTime = omp_get_wtime() - start;
+    // printf("Time: %.5f\n", totalTime);
 }

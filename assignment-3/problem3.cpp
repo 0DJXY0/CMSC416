@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
+#include <omp.h>
 
 /* Return the product of the vector x with every odd indexed element inverted.
    i.e. x_0 * 1/x_1 * x_2 * 1/x_3 * x_4 ...
@@ -47,12 +48,23 @@ int main(int argc, char **argv) {
         x[i] = (rand() / (double) RAND_MAX) * (points_max - points_min) + points_min;
     }
 
-    // double totalTime = 0.0;
-    // double start = omp_get_wtime();
+    //double true_val = productWithInverses(x);
+    //double totalTime = 0.0;
+    //double start = omp_get_wtime();
 
-    double val = productWithInverses(x);
-    printf("Product: %.5f\n", val);
+    //printf("True Product: %.5f\n", true_val);
 
-    // totalTime = omp_get_wtime() - start;
-    // printf("Time: %.5f\n", totalTime);
+
+    double result = 1.0;
+    #pragma omp parallel for reduction(*:result)
+    for (int i = 0; i < x.size(); i++) {
+        if (i % 2 == 1) {
+            result *= 1 / x[i];
+        } else {
+            result *= x[i];
+        }
+    }
+    printf("Product: %.5f\n", result);
+    //totalTime = omp_get_wtime() - start;
+    //printf("Time: %.5f\n", totalTime);
 }

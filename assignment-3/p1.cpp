@@ -65,9 +65,9 @@ int main(int argc, char **argv) {
     }
 
     //double true_dist = closestPair(points);
-    //double totalTime = 0.0;
-    //double start = omp_get_wtime();
     double dist = std::numeric_limits<double>::max();
+    double totalTime = 0.0;
+    double start = omp_get_wtime();
     if (points.size() < 2) {
       dist = 0;
     }

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <complex>
+#include <omp.h>
 
 #define POINTS_MIN  -1.0
 #define POINTS_MAX  1.0
@@ -47,7 +48,7 @@ int main(int argc, char **argv) {
     }
 
     std::vector<double> x(N);
-    std::vector< std::complex<double> > correct(N), test(N);
+    std::vector< std::complex<double> > correct(N), dft_omp(N);
     srand(seed);
 
     for (int i = 0; i < N; i += 1) {
@@ -56,20 +57,46 @@ int main(int argc, char **argv) {
 
     // double totalTime = 0.0;
     // double start = omp_get_wtime();
-
+    
     dft(x, correct);
-    dft(x, test);
 
+    N = x.size();
+    double theta;
+    
+    dft_omp.resize(N, std::complex<double>(0, 0));
+    std::complex<double> sum(0.0, 0.0);
+    //double totalTime = 0.0;
+    //double start = omp_get_wtime();
+    std::complex<double> c;
+    #pragma omp parallel for private(sum,theta,c)
+    for (int k = 0; k < N; k++) {
+        sum = std::complex<double>(0.0,0.0);
+        for (int n = 0; n < N; n++) {
+            theta = 2 * M_PI * k * n / N;
+            c = std::complex<double> (std::cos(theta), -std::sin(theta));
+	    //std::complex<double> c(std::cos(theta), -std::sin(theta));
+	    sum += x[n] * c;
+        }
+        dft_omp[k] = sum;
+    }
+
+
+
+    
     bool isCorrect = true;
     for (int j = 0; j < x.size(); j += 1) {
-        if (std::abs(correct[j].real() - test[j].real()) > 1e-4 || std::abs(correct[j].imag() - test[j].imag()) > 1e-4) {
+        if (std::abs(correct[j].real() - dft_omp[j].real()) > 1e-4 || std::abs(correct[j].imag() - dft_omp[j].imag()) > 1e-4) {
             isCorrect = false;
             break;
         }
     }
 
+    
     printf("Correct? %s\n", isCorrect?"true":"false");
 
-    // totalTime = omp_get_wtime() - start;
-    // printf("Time: %.5f\n", totalTime);
+
+
+    
+    //totalTime = omp_get_wtime() - start;
+    //printf("Time: %.5f\n", totalTime);
 }

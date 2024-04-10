@@ -1,0 +1,51 @@
+Correct? true
+Time: 1.29318
+Number of threads is 1
+Number of threads is 1
+Correct? true
+Time: 1.28921
+Number of threads is 2
+Correct? true
+Time: 0.64521
+Number of threads is 4
+Correct? true
+Time: 0.32329
+Number of threads is 8
+Correct? true
+Time: 0.16264
+Number of threads is 16
+Correct? true
+Time: 0.08229
+Number of threads is 32
+Correct? true
+Time: 0.04215
+Number of threads is 1
+Correct? true
+Time: 1.28915
+Number of threads is 2
+Correct? true
+Time: 0.64719
+Number of threads is 4
+Correct? true
+Time: 0.32455
+Number of threads is 8
+Correct? true
+Time: 0.16281
+Number of threads is 16
+Correct? true
+Time: 0.08285
+Number of threads is 32
+Correct? true
+Time: 0.04323
+Number of threads is 1
+Correct? true
+Number of threads is 2
+Correct? true
+Number of threads is 4
+Correct? true
+Number of threads is 8
+Correct? true
+Number of threads is 16
+Correct? true
+Number of threads is 32
+Correct? true

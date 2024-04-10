@@ -64,10 +64,10 @@ int main(int argc, char **argv) {
         points[i].y = (rand() / (double) RAND_MAX) * (POINTS_MAX - POINTS_MIN) + POINTS_MIN;
     }
 
-    //double true_dist = closestPair(points);
-    //double totalTime = 0.0;
-    //double start = omp_get_wtime();
+    double true_dist = closestPair(points);
     double dist = std::numeric_limits<double>::max();
+    double totalTime = 0.0;
+    double start = omp_get_wtime();
     if (points.size() < 2) {
       dist = 0;
     }
@@ -83,8 +83,9 @@ int main(int argc, char **argv) {
       }
       
     }
+    totalTime = omp_get_wtime() - start;
+    printf("True Dist: %.5f\n",true_dist);
     
-    printf("Distance: %.5f\n", dist);
     //totalTime = omp_get_wtime() - start;
-    //printf("Time: %.5f\n", totalTime);
+    printf("Time: %.5f\n", totalTime);
 }
