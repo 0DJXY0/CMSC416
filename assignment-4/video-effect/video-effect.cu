@@ -2,7 +2,7 @@
 
 /*  use this to set the block size of the kernel launches.
     CUDA kernels will be launched with block size blockDimSize by blockDimSize. */
-constexpr int blockDimSize = 8;
+constexpr int blockDimSize = 6;
 
 /*  your job is to write convolveGPU:
     convolveGPU will be called with blockSize blockDimSize x blockDimSize 
@@ -11,7 +11,40 @@ constexpr int blockDimSize = 8;
     Look at convolveCPU below for more info.
 */
 __global__ void convolveGPU(float const* in, float *out, int width, int height, float const* kernel, int kernelWidth, int kernelHeight) {
-    /* your code here */
+    const int halfKernelHeight = kernelHeight/2;
+    const int halfKernelWidth = kernelWidth/2;
+    const int redChannel = 2;
+    const int greenChannel = 1;
+    const int blueChannel = 0;
+    int i0 = blockDim.x * blockIdx.x + threadIdx.x;
+    int j0 = blockDim.y * blockIdx.y + threadIdx.y;
+    int stride_x = blockDim.x * gridDim.x;
+    int stride_y = blockDim.y * gridDim.y;
+
+    /* point-wise loop over the image pixels */
+    for (int i = halfKernelHeight+i0; i < height-halfKernelHeight; i += stride_x) {
+        for (int j = halfKernelWidth+j0; j < width-halfKernelWidth; j += stride_y) {
+
+            /* compute dot product of kernel and sub-image */
+            float redDot = 0.0f, greenDot = 0.0f, blueDot = 0.0f;
+            for (int k = -halfKernelHeight; k <= halfKernelHeight; k += 1) {
+                for (int l = -halfKernelWidth; l <= halfKernelWidth; l += 1) {
+
+                    /* add in[i+k][j+l]*kernel[k][l] to dot product for red, green, and blue */
+                    redDot += in[(i+k)*width*3 + (j+l)*3 + redChannel] * kernel[(k+halfKernelHeight)*kernelWidth + (l+halfKernelWidth)];
+                    greenDot += in[(i+k)*width*3 + (j+l)*3 + greenChannel] * kernel[(k+halfKernelHeight)*kernelWidth + (l+halfKernelWidth)];
+                    blueDot += in[(i+k)*width*3 + (j+l)*3 + blueChannel] * kernel[(k+halfKernelHeight)*kernelWidth + (l+halfKernelWidth)];
+                
+                }
+            }
+
+            /* set out[i][j] to dot product */
+            out[i*width*3 + j*3 + redChannel] = redDot;
+            out[i*width*3 + j*3 + greenChannel] = greenDot;
+            out[i*width*3 + j*3 + blueChannel] = blueDot;
+
+        }
+    }
 }
 
 /* A CPU example of the convolve kernel */
