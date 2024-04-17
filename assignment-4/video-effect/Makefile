@@ -20,4 +20,4 @@ video-effect: driver.cc video-effect.o
 	$(CXX) $(CXXFLAGS) $(CXX_INCLUDES) -o $@ $^ $(CXX_LIBS)
 
 clean:
-	rm $(TARGET) *.o
+	rm $(TARGET) *.o  
