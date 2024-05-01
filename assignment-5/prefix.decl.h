@@ -13,6 +13,12 @@
 /* DECLS: readonly CProxy_Prefix prefixArray;
  */
 
+/* DECLS: readonly int numPhases;
+ */
+
+/* DECLS: readonly int numDone;
+ */
+
 /* DECLS: mainchare Main: Chare{
 Main(CkArgMsg* impl_msg);
 void done();
@@ -129,7 +135,9 @@ class CProxy_Main:public CProxy_Chare{
 typedef CBaseT1<Chare, CProxy_Main>CBase_Main;
 
 /* DECLS: array Prefix: ArrayElement{
-Prefix(const std::vector<int> &impl_noname_0);
+Prefix();
+void receive(const std::vector<int> &impl_noname_0);
+void write(const std::string &impl_noname_1);
 void phase(int phase);
 void passValue(int phase, int value);
 Prefix(CkMigrateMessage* impl_msg);
@@ -151,84 +159,136 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
 
     static int __idx;
     static void __register(const char *s, size_t size);
-    /* DECLS: Prefix(const std::vector<int> &impl_noname_0);
+    /* DECLS: Prefix();
      */
     // Entry point registration at startup
     
-    static int reg_Prefix_marshall1();
+    static int reg_Prefix_void();
     // Entry point index lookup
     
-    inline static int idx_Prefix_marshall1() {
-      static int epidx = reg_Prefix_marshall1();
+    inline static int idx_Prefix_void() {
+      static int epidx = reg_Prefix_void();
       return epidx;
     }
 
     
-    static int ckNew(const std::vector<int> &impl_noname_0) { return idx_Prefix_marshall1(); }
+    static int ckNew() { return idx_Prefix_void(); }
     
-    static void _call_Prefix_marshall1(void* impl_msg, void* impl_obj);
+    static void _call_Prefix_void(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_Prefix_marshall1(void* impl_msg, void* impl_obj);
+    static void _call_sdag_Prefix_void(void* impl_msg, void* impl_obj);
+    /* DECLS: void receive(const std::vector<int> &impl_noname_0);
+     */
+    // Entry point registration at startup
     
-    static int _callmarshall_Prefix_marshall1(char* impl_buf, void* impl_obj_void);
+    static int reg_receive_marshall2();
+    // Entry point index lookup
     
-    static void _marshallmessagepup_Prefix_marshall1(PUP::er &p,void *msg);
+    inline static int idx_receive_marshall2() {
+      static int epidx = reg_receive_marshall2();
+      return epidx;
+    }
+
+    
+    inline static int idx_receive(void (Prefix::*)(const std::vector<int> &impl_noname_0) ) {
+      return idx_receive_marshall2();
+    }
+
+
+    
+    static int receive(const std::vector<int> &impl_noname_0) { return idx_receive_marshall2(); }
+    
+    static void _call_receive_marshall2(void* impl_msg, void* impl_obj);
+    
+    static void _call_sdag_receive_marshall2(void* impl_msg, void* impl_obj);
+    
+    static int _callmarshall_receive_marshall2(char* impl_buf, void* impl_obj_void);
+    
+    static void _marshallmessagepup_receive_marshall2(PUP::er &p,void *msg);
+    /* DECLS: void write(const std::string &impl_noname_1);
+     */
+    // Entry point registration at startup
+    
+    static int reg_write_marshall3();
+    // Entry point index lookup
+    
+    inline static int idx_write_marshall3() {
+      static int epidx = reg_write_marshall3();
+      return epidx;
+    }
+
+    
+    inline static int idx_write(void (Prefix::*)(const std::string &impl_noname_1) ) {
+      return idx_write_marshall3();
+    }
+
+
+    
+    static int write(const std::string &impl_noname_1) { return idx_write_marshall3(); }
+    
+    static void _call_write_marshall3(void* impl_msg, void* impl_obj);
+    
+    static void _call_sdag_write_marshall3(void* impl_msg, void* impl_obj);
+    
+    static int _callmarshall_write_marshall3(char* impl_buf, void* impl_obj_void);
+    
+    static void _marshallmessagepup_write_marshall3(PUP::er &p,void *msg);
     /* DECLS: void phase(int phase);
      */
     // Entry point registration at startup
     
-    static int reg_phase_marshall2();
+    static int reg_phase_marshall4();
     // Entry point index lookup
     
-    inline static int idx_phase_marshall2() {
-      static int epidx = reg_phase_marshall2();
+    inline static int idx_phase_marshall4() {
+      static int epidx = reg_phase_marshall4();
       return epidx;
     }
 
     
     inline static int idx_phase(void (Prefix::*)(int phase) ) {
-      return idx_phase_marshall2();
+      return idx_phase_marshall4();
     }
 
 
     
-    static int phase(int phase) { return idx_phase_marshall2(); }
+    static int phase(int phase) { return idx_phase_marshall4(); }
     
-    static void _call_phase_marshall2(void* impl_msg, void* impl_obj);
+    static void _call_phase_marshall4(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_phase_marshall2(void* impl_msg, void* impl_obj);
+    static void _call_sdag_phase_marshall4(void* impl_msg, void* impl_obj);
     
-    static int _callmarshall_phase_marshall2(char* impl_buf, void* impl_obj_void);
+    static int _callmarshall_phase_marshall4(char* impl_buf, void* impl_obj_void);
     
-    static void _marshallmessagepup_phase_marshall2(PUP::er &p,void *msg);
+    static void _marshallmessagepup_phase_marshall4(PUP::er &p,void *msg);
     /* DECLS: void passValue(int phase, int value);
      */
     // Entry point registration at startup
     
-    static int reg_passValue_marshall3();
+    static int reg_passValue_marshall5();
     // Entry point index lookup
     
-    inline static int idx_passValue_marshall3() {
-      static int epidx = reg_passValue_marshall3();
+    inline static int idx_passValue_marshall5() {
+      static int epidx = reg_passValue_marshall5();
       return epidx;
     }
 
     
     inline static int idx_passValue(void (Prefix::*)(int phase, int value) ) {
-      return idx_passValue_marshall3();
+      return idx_passValue_marshall5();
     }
 
 
     
-    static int passValue(int phase, int value) { return idx_passValue_marshall3(); }
+    static int passValue(int phase, int value) { return idx_passValue_marshall5(); }
     
-    static void _call_passValue_marshall3(void* impl_msg, void* impl_obj);
+    static void _call_passValue_marshall5(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_passValue_marshall3(void* impl_msg, void* impl_obj);
+    static void _call_sdag_passValue_marshall5(void* impl_msg, void* impl_obj);
     
-    static int _callmarshall_passValue_marshall3(char* impl_buf, void* impl_obj_void);
+    static int _callmarshall_passValue_marshall5(char* impl_buf, void* impl_obj_void);
     
-    static void _marshallmessagepup_passValue_marshall3(PUP::er &p,void *msg);
+    static void _marshallmessagepup_passValue_marshall5(PUP::er &p,void *msg);
     /* DECLS: Prefix(CkMigrateMessage* impl_msg);
      */
     // Entry point registration at startup
@@ -343,10 +403,20 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
         :CProxyElement_ArrayElement(aid,idx)
     {
 }
-/* DECLS: Prefix(const std::vector<int> &impl_noname_0);
+/* DECLS: Prefix();
  */
     
-    void insert(const std::vector<int> &impl_noname_0, int onPE=-1, const CkEntryOptions *impl_e_opts=NULL);
+    void insert(int onPE=-1, const CkEntryOptions *impl_e_opts=NULL);
+/* DECLS: void receive(const std::vector<int> &impl_noname_0);
+ */
+    
+    void receive(const std::vector<int> &impl_noname_0, const CkEntryOptions *impl_e_opts=NULL) ;
+
+/* DECLS: void write(const std::string &impl_noname_1);
+ */
+    
+    void write(const std::string &impl_noname_1, const CkEntryOptions *impl_e_opts=NULL) ;
+
 /* DECLS: void phase(int phase);
  */
     
@@ -424,10 +494,6 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
     inline void ckSetReductionClient(CkCallback *cb) const
     { CProxy_ArrayElement::ckSetReductionClient(cb); }
 
-    // Empty array construction
-    static CkArrayID ckNew(CkArrayOptions opts = CkArrayOptions()) { return ckCreateEmptyArray(opts); }
-    static void      ckNew(CkCallback cb, CkArrayOptions opts = CkArrayOptions()) { ckCreateEmptyArrayAsync(cb, opts); }
-
     // Generalized array indexing:
     CProxyElement_Prefix operator [] (const CkArrayIndex1D &idx) const
     { return CProxyElement_Prefix(ckGetArrayID(), idx, CK_DELCTOR_CALL); }
@@ -441,13 +507,23 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
         :CProxy_ArrayElement(aid,CK_DELCTOR_ARGS) {}
     CProxy_Prefix(const CkArrayID &aid) 
         :CProxy_ArrayElement(aid) {}
-/* DECLS: Prefix(const std::vector<int> &impl_noname_0);
+/* DECLS: Prefix();
  */
     
-    static CkArrayID ckNew(const std::vector<int> &impl_noname_0, const CkArrayOptions &opts = CkArrayOptions(), const CkEntryOptions *impl_e_opts=NULL);
-    static void      ckNew(const std::vector<int> &impl_noname_0, const CkArrayOptions &opts, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts=NULL);
-    static CkArrayID ckNew(const std::vector<int> &impl_noname_0, const int s1, const CkEntryOptions *impl_e_opts=NULL);
-    static void ckNew(const std::vector<int> &impl_noname_0, const int s1, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts=NULL);
+    static CkArrayID ckNew(const CkArrayOptions &opts = CkArrayOptions(), const CkEntryOptions *impl_e_opts=NULL);
+    static void      ckNew(const CkArrayOptions &opts, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts=NULL);
+    static CkArrayID ckNew(const int s1, const CkEntryOptions *impl_e_opts=NULL);
+    static void ckNew(const int s1, CkCallback _ck_array_creation_cb, const CkEntryOptions *impl_e_opts=NULL);
+
+/* DECLS: void receive(const std::vector<int> &impl_noname_0);
+ */
+    
+    void receive(const std::vector<int> &impl_noname_0, const CkEntryOptions *impl_e_opts=NULL) ;
+
+/* DECLS: void write(const std::string &impl_noname_1);
+ */
+    
+    void write(const std::string &impl_noname_1, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void phase(int phase);
  */
@@ -615,9 +691,19 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
     static void contribute(int dataSize,void *data,CkReduction::reducerType type, CkSectionInfo &sid, const CkCallback &cb, int userData=-1, int fragSize=-1);
     template <typename T>
     static void contribute(std::vector<T> &data, CkReduction::reducerType type, CkSectionInfo &sid, const CkCallback &cb, int userData=-1, int fragSize=-1);
-/* DECLS: Prefix(const std::vector<int> &impl_noname_0);
+/* DECLS: Prefix();
  */
     
+
+/* DECLS: void receive(const std::vector<int> &impl_noname_0);
+ */
+    
+    void receive(const std::vector<int> &impl_noname_0, const CkEntryOptions *impl_e_opts=NULL) ;
+
+/* DECLS: void write(const std::string &impl_noname_1);
+ */
+    
+    void write(const std::string &impl_noname_1, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: void phase(int phase);
  */
@@ -639,6 +725,8 @@ typedef CBaseT1<ArrayElementT<CkIndex1D>, CProxy_Prefix>CBase_Prefix;
 
 
 
+
+
 /* ---------------- method closures -------------- */
 class Closure_Main {
   public:
@@ -653,10 +741,16 @@ class Closure_Prefix {
   public:
 
 
-    struct phase_2_closure;
+    struct receive_2_closure;
 
 
-    struct passValue_3_closure;
+    struct write_3_closure;
+
+
+    struct phase_4_closure;
+
+
+    struct passValue_5_closure;
 
 
 };
