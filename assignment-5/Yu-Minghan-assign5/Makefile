@@ -12,8 +12,8 @@ prefix: $(OBJS) $(OBJS_DECL)
 prefix.decl.h: prefix.ci
 	$(CHARMC) prefix.ci
 
-Prefix.o: Prefix.C prefix.decl.h
-	$(CHARMC) $(OPTS) -o Prefix.o Prefix.C
+Prefix.o: prefix.C prefix.decl.h
+	$(CHARMC) $(OPTS) -o Prefix.o prefix.C
 
 clean:
 	rm -f *.decl.h *.def.h *.o charmrun prefix
