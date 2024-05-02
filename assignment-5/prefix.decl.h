@@ -22,6 +22,7 @@
 /* DECLS: mainchare Main: Chare{
 Main(CkArgMsg* impl_msg);
 void done();
+void finishLoading();
 };
  */
  class Main;
@@ -79,6 +80,30 @@ class CkIndex_Main:public CkIndex_Chare{
     static void _call_done_void(void* impl_msg, void* impl_obj);
     
     static void _call_sdag_done_void(void* impl_msg, void* impl_obj);
+    /* DECLS: void finishLoading();
+     */
+    // Entry point registration at startup
+    
+    static int reg_finishLoading_void();
+    // Entry point index lookup
+    
+    inline static int idx_finishLoading_void() {
+      static int epidx = reg_finishLoading_void();
+      return epidx;
+    }
+
+    
+    inline static int idx_finishLoading(void (Main::*)() ) {
+      return idx_finishLoading_void();
+    }
+
+
+    
+    static int finishLoading() { return idx_finishLoading_void(); }
+    
+    static void _call_finishLoading_void(void* impl_msg, void* impl_obj);
+    
+    static void _call_sdag_finishLoading_void(void* impl_msg, void* impl_obj);
 };
 /* --------------- element proxy ------------------ */
 class CProxy_Main:public CProxy_Chare{
@@ -130,6 +155,11 @@ class CProxy_Main:public CProxy_Chare{
     
     void done(const CkEntryOptions *impl_e_opts=NULL);
 
+/* DECLS: void finishLoading();
+ */
+    
+    void finishLoading(const CkEntryOptions *impl_e_opts=NULL);
+
 };
 #define Main_SDAG_CODE 
 typedef CBaseT1<Chare, CProxy_Main>CBase_Main;
@@ -138,8 +168,9 @@ typedef CBaseT1<Chare, CProxy_Main>CBase_Main;
 Prefix();
 void receive(const std::vector<int> &impl_noname_0);
 void write(const std::string &impl_noname_1);
-void phase(int phase);
-void passValue(int phase, int value);
+void start();
+void phase();
+void passValue(int Phase, int Value);
 Prefix(CkMigrateMessage* impl_msg);
 };
  */
@@ -233,62 +264,82 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
     static int _callmarshall_write_marshall3(char* impl_buf, void* impl_obj_void);
     
     static void _marshallmessagepup_write_marshall3(PUP::er &p,void *msg);
-    /* DECLS: void phase(int phase);
+    /* DECLS: void start();
      */
     // Entry point registration at startup
     
-    static int reg_phase_marshall4();
+    static int reg_start_void();
     // Entry point index lookup
     
-    inline static int idx_phase_marshall4() {
-      static int epidx = reg_phase_marshall4();
+    inline static int idx_start_void() {
+      static int epidx = reg_start_void();
       return epidx;
     }
 
     
-    inline static int idx_phase(void (Prefix::*)(int phase) ) {
-      return idx_phase_marshall4();
+    inline static int idx_start(void (Prefix::*)() ) {
+      return idx_start_void();
     }
 
 
     
-    static int phase(int phase) { return idx_phase_marshall4(); }
+    static int start() { return idx_start_void(); }
     
-    static void _call_phase_marshall4(void* impl_msg, void* impl_obj);
+    static void _call_start_void(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_phase_marshall4(void* impl_msg, void* impl_obj);
-    
-    static int _callmarshall_phase_marshall4(char* impl_buf, void* impl_obj_void);
-    
-    static void _marshallmessagepup_phase_marshall4(PUP::er &p,void *msg);
-    /* DECLS: void passValue(int phase, int value);
+    static void _call_sdag_start_void(void* impl_msg, void* impl_obj);
+    /* DECLS: void phase();
      */
     // Entry point registration at startup
     
-    static int reg_passValue_marshall5();
+    static int reg_phase_void();
     // Entry point index lookup
     
-    inline static int idx_passValue_marshall5() {
-      static int epidx = reg_passValue_marshall5();
+    inline static int idx_phase_void() {
+      static int epidx = reg_phase_void();
       return epidx;
     }
 
     
-    inline static int idx_passValue(void (Prefix::*)(int phase, int value) ) {
-      return idx_passValue_marshall5();
+    inline static int idx_phase(void (Prefix::*)() ) {
+      return idx_phase_void();
     }
 
 
     
-    static int passValue(int phase, int value) { return idx_passValue_marshall5(); }
+    static int phase() { return idx_phase_void(); }
     
-    static void _call_passValue_marshall5(void* impl_msg, void* impl_obj);
+    static void _call_phase_void(void* impl_msg, void* impl_obj);
     
-    static void _call_sdag_passValue_marshall5(void* impl_msg, void* impl_obj);
+    static void _call_sdag_phase_void(void* impl_msg, void* impl_obj);
+    /* DECLS: void passValue(int Phase, int Value);
+     */
+    // Entry point registration at startup
     
-    static int _callmarshall_passValue_marshall5(char* impl_buf, void* impl_obj_void);
+    static int reg_passValue_marshall6();
+    // Entry point index lookup
     
-    static void _marshallmessagepup_passValue_marshall5(PUP::er &p,void *msg);
+    inline static int idx_passValue_marshall6() {
+      static int epidx = reg_passValue_marshall6();
+      return epidx;
+    }
+
+    
+    inline static int idx_passValue(void (Prefix::*)(int Phase, int Value) ) {
+      return idx_passValue_marshall6();
+    }
+
+
+    
+    static int passValue(int Phase, int Value) { return idx_passValue_marshall6(); }
+    
+    static void _call_passValue_marshall6(void* impl_msg, void* impl_obj);
+    
+    static void _call_sdag_passValue_marshall6(void* impl_msg, void* impl_obj);
+    
+    static int _callmarshall_passValue_marshall6(char* impl_buf, void* impl_obj_void);
+    
+    static void _marshallmessagepup_passValue_marshall6(PUP::er &p,void *msg);
     /* DECLS: Prefix(CkMigrateMessage* impl_msg);
      */
     // Entry point registration at startup
@@ -417,15 +468,20 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
     
     void write(const std::string &impl_noname_1, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void phase(int phase);
+/* DECLS: void start();
  */
     
-    void phase(int phase, const CkEntryOptions *impl_e_opts=NULL) ;
+    void start(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void passValue(int phase, int value);
+/* DECLS: void phase();
  */
     
-    void passValue(int phase, int value, const CkEntryOptions *impl_e_opts=NULL) ;
+    void phase(const CkEntryOptions *impl_e_opts=NULL) ;
+
+/* DECLS: void passValue(int Phase, int Value);
+ */
+    
+    void passValue(int Phase, int Value, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: Prefix(CkMigrateMessage* impl_msg);
  */
@@ -525,15 +581,20 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
     
     void write(const std::string &impl_noname_1, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void phase(int phase);
+/* DECLS: void start();
  */
     
-    void phase(int phase, const CkEntryOptions *impl_e_opts=NULL) ;
+    void start(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void passValue(int phase, int value);
+/* DECLS: void phase();
  */
     
-    void passValue(int phase, int value, const CkEntryOptions *impl_e_opts=NULL) ;
+    void phase(const CkEntryOptions *impl_e_opts=NULL) ;
+
+/* DECLS: void passValue(int Phase, int Value);
+ */
+    
+    void passValue(int Phase, int Value, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: Prefix(CkMigrateMessage* impl_msg);
  */
@@ -705,15 +766,20 @@ class CkIndex_Prefix:public CkIndex_ArrayElement{
     
     void write(const std::string &impl_noname_1, const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void phase(int phase);
+/* DECLS: void start();
  */
     
-    void phase(int phase, const CkEntryOptions *impl_e_opts=NULL) ;
+    void start(const CkEntryOptions *impl_e_opts=NULL) ;
 
-/* DECLS: void passValue(int phase, int value);
+/* DECLS: void phase();
  */
     
-    void passValue(int phase, int value, const CkEntryOptions *impl_e_opts=NULL) ;
+    void phase(const CkEntryOptions *impl_e_opts=NULL) ;
+
+/* DECLS: void passValue(int Phase, int Value);
+ */
+    
+    void passValue(int Phase, int Value, const CkEntryOptions *impl_e_opts=NULL) ;
 
 /* DECLS: Prefix(CkMigrateMessage* impl_msg);
  */
@@ -734,6 +800,9 @@ class Closure_Main {
 
     struct done_2_closure;
 
+
+    struct finishLoading_3_closure;
+
 };
 
 /* ---------------- method closures -------------- */
@@ -747,10 +816,13 @@ class Closure_Prefix {
     struct write_3_closure;
 
 
-    struct phase_4_closure;
+    struct start_4_closure;
 
 
-    struct passValue_5_closure;
+    struct phase_5_closure;
+
+
+    struct passValue_6_closure;
 
 
 };

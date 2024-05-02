@@ -1,5 +1,5 @@
 CHARMC      = charmc
-OPTS        = -g -O2
+OPTS        = -O2
 
 OBJS		= Prefix.o
 OBJS_DECL	= prefix.decl.h

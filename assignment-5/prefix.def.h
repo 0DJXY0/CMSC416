@@ -27,6 +27,26 @@
     };
 #endif /* CK_TEMPLATES_ONLY */
 
+#ifndef CK_TEMPLATES_ONLY
+
+    struct Closure_Main::finishLoading_3_closure : public SDAG::Closure {
+      
+
+      finishLoading_3_closure() {
+        init();
+      }
+      finishLoading_3_closure(CkMigrateMessage*) {
+        init();
+      }
+            void pup(PUP::er& __p) {
+        packClosure(__p);
+      }
+      virtual ~finishLoading_3_closure() {
+      }
+      PUPable_decl(SINGLE_ARG(finishLoading_3_closure));
+    };
+#endif /* CK_TEMPLATES_ONLY */
+
 
 /* ---------------- method closures -------------- */
 #ifndef CK_TEMPLATES_ONLY
@@ -80,50 +100,67 @@
 
 #ifndef CK_TEMPLATES_ONLY
 
-    struct Closure_Prefix::phase_4_closure : public SDAG::Closure {
-            int phase;
+    struct Closure_Prefix::start_4_closure : public SDAG::Closure {
+      
 
-
-      phase_4_closure() {
+      start_4_closure() {
         init();
       }
-      phase_4_closure(CkMigrateMessage*) {
+      start_4_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return phase;}
-      void pup(PUP::er& __p) {
-        __p | phase;
+            void pup(PUP::er& __p) {
         packClosure(__p);
       }
-      virtual ~phase_4_closure() {
+      virtual ~start_4_closure() {
       }
-      PUPable_decl(SINGLE_ARG(phase_4_closure));
+      PUPable_decl(SINGLE_ARG(start_4_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
 
-    struct Closure_Prefix::passValue_5_closure : public SDAG::Closure {
-            int phase;
-            int value;
+    struct Closure_Prefix::phase_5_closure : public SDAG::Closure {
+      
 
-
-      passValue_5_closure() {
+      phase_5_closure() {
         init();
       }
-      passValue_5_closure(CkMigrateMessage*) {
+      phase_5_closure(CkMigrateMessage*) {
         init();
       }
-            int & getP0() { return phase;}
-            int & getP1() { return value;}
-      void pup(PUP::er& __p) {
-        __p | phase;
-        __p | value;
+            void pup(PUP::er& __p) {
         packClosure(__p);
       }
-      virtual ~passValue_5_closure() {
+      virtual ~phase_5_closure() {
       }
-      PUPable_decl(SINGLE_ARG(passValue_5_closure));
+      PUPable_decl(SINGLE_ARG(phase_5_closure));
+    };
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifndef CK_TEMPLATES_ONLY
+
+    struct Closure_Prefix::passValue_6_closure : public SDAG::Closure {
+            int Phase;
+            int Value;
+
+
+      passValue_6_closure() {
+        init();
+      }
+      passValue_6_closure(CkMigrateMessage*) {
+        init();
+      }
+            int & getP0() { return Phase;}
+            int & getP1() { return Value;}
+      void pup(PUP::er& __p) {
+        __p | Phase;
+        __p | Value;
+        packClosure(__p);
+      }
+      virtual ~passValue_6_closure() {
+      }
+      PUPable_decl(SINGLE_ARG(passValue_6_closure));
     };
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -184,6 +221,7 @@ extern "C" void __xlater_roPup_numDone(void *_impl_pup_er) {
 /* DEFS: mainchare Main: Chare{
 Main(CkArgMsg* impl_msg);
 void done();
+void finishLoading();
 };
  */
 #ifndef CK_TEMPLATES_ONLY
@@ -253,6 +291,38 @@ PUPable_def(SINGLE_ARG(Closure_Main::done_2_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
+/* DEFS: void finishLoading();
+ */
+void CProxy_Main::finishLoading(const CkEntryOptions *impl_e_opts)
+{
+  ckCheck();
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
+  if (ckIsDelegated()) {
+    int destPE=CkChareMsgPrep(CkIndex_Main::idx_finishLoading_void(), impl_msg, &ckGetChareID());
+    if (destPE!=-1) ckDelegatedTo()->ChareSend(ckDelegatedPtr(),CkIndex_Main::idx_finishLoading_void(), impl_msg, &ckGetChareID(),destPE);
+  } else {
+    CkSendMsg(CkIndex_Main::idx_finishLoading_void(), impl_msg, &ckGetChareID(),0);
+  }
+}
+
+// Entry point registration function
+int CkIndex_Main::reg_finishLoading_void() {
+  int epidx = CkRegisterEp("finishLoading()",
+      reinterpret_cast<CkCallFnPtr>(_call_finishLoading_void), 0, __idx, 0);
+  return epidx;
+}
+
+void CkIndex_Main::_call_finishLoading_void(void* impl_msg, void* impl_obj_void)
+{
+  Main* impl_obj = static_cast<Main*>(impl_obj_void);
+  impl_obj->finishLoading();
+  if(UsrToEnv(impl_msg)->isVarSysMsg() == 0)
+    CkFreeSysMsg(impl_msg);
+}
+PUPable_def(SINGLE_ARG(Closure_Main::finishLoading_3_closure))
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifndef CK_TEMPLATES_ONLY
 #endif /* CK_TEMPLATES_ONLY */
 #ifndef CK_TEMPLATES_ONLY
 void CkIndex_Main::__register(const char *s, size_t size) {
@@ -265,6 +335,9 @@ void CkIndex_Main::__register(const char *s, size_t size) {
   // REG: void done();
   idx_done_void();
 
+  // REG: void finishLoading();
+  idx_finishLoading_void();
+
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -272,8 +345,9 @@ void CkIndex_Main::__register(const char *s, size_t size) {
 Prefix();
 void receive(const std::vector<int> &impl_noname_0);
 void write(const std::string &impl_noname_1);
-void phase(int phase);
-void passValue(int phase, int value);
+void start();
+void phase();
+void passValue(int Phase, int Value);
 Prefix(CkMigrateMessage* impl_msg);
 };
  */
@@ -392,54 +466,57 @@ void CProxyElement_Prefix::write(const std::string &impl_noname_1, const CkEntry
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
-/* DEFS: void phase(int phase);
+/* DEFS: void start();
  */
-void CProxyElement_Prefix::phase(int phase, const CkEntryOptions *impl_e_opts) 
+void CProxyElement_Prefix::start(const CkEntryOptions *impl_e_opts) 
 {
   ckCheck();
-  //Marshall: int phase
-  int impl_off=0;
-  { //Find the size of the PUP'd data
-    PUP::sizer implP;
-    implP|phase;
-    impl_off+=implP.size();
-  }
-  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
-  { //Copy over the PUP'd data
-    PUP::toMem implP((void *)impl_msg->msgBuf);
-    implP|phase;
-  }
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
   CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
   impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
-  ckSend(impl_amsg, CkIndex_Prefix::idx_phase_marshall4(),0);
+  ckSend(impl_amsg, CkIndex_Prefix::idx_start_void(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
-/* DEFS: void passValue(int phase, int value);
+/* DEFS: void phase();
  */
-void CProxyElement_Prefix::passValue(int phase, int value, const CkEntryOptions *impl_e_opts) 
+void CProxyElement_Prefix::phase(const CkEntryOptions *impl_e_opts) 
 {
   ckCheck();
-  //Marshall: int phase, int value
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
+  UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
+  CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
+  impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
+  ckSend(impl_amsg, CkIndex_Prefix::idx_phase_void(),0);
+}
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifndef CK_TEMPLATES_ONLY
+/* DEFS: void passValue(int Phase, int Value);
+ */
+void CProxyElement_Prefix::passValue(int Phase, int Value, const CkEntryOptions *impl_e_opts) 
+{
+  ckCheck();
+  //Marshall: int Phase, int Value
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
-    implP|phase;
-    implP|value;
+    implP|Phase;
+    implP|Value;
     impl_off+=implP.size();
   }
   CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
   { //Copy over the PUP'd data
     PUP::toMem implP((void *)impl_msg->msgBuf);
-    implP|phase;
-    implP|value;
+    implP|Phase;
+    implP|Value;
   }
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
   CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
   impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
-  ckSend(impl_amsg, CkIndex_Prefix::idx_passValue_marshall5(),0);
+  ckSend(impl_amsg, CkIndex_Prefix::idx_passValue_marshall6(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -653,165 +730,149 @@ PUPable_def(SINGLE_ARG(Closure_Prefix::write_3_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
-/* DEFS: void phase(int phase);
+/* DEFS: void start();
  */
-void CProxy_Prefix::phase(int phase, const CkEntryOptions *impl_e_opts) 
+void CProxy_Prefix::start(const CkEntryOptions *impl_e_opts) 
 {
   ckCheck();
-  //Marshall: int phase
-  int impl_off=0;
-  { //Find the size of the PUP'd data
-    PUP::sizer implP;
-    implP|phase;
-    impl_off+=implP.size();
-  }
-  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
-  { //Copy over the PUP'd data
-    PUP::toMem implP((void *)impl_msg->msgBuf);
-    implP|phase;
-  }
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
   CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
   impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
-  ckBroadcast(impl_amsg, CkIndex_Prefix::idx_phase_marshall4(),0);
+  ckBroadcast(impl_amsg, CkIndex_Prefix::idx_start_void(),0);
 }
 
 // Entry point registration function
-int CkIndex_Prefix::reg_phase_marshall4() {
-  int epidx = CkRegisterEp("phase(int phase)",
-      reinterpret_cast<CkCallFnPtr>(_call_phase_marshall4), CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
-  CkRegisterMarshallUnpackFn(epidx, _callmarshall_phase_marshall4);
-  CkRegisterMessagePupFn(epidx, _marshallmessagepup_phase_marshall4);
-
+int CkIndex_Prefix::reg_start_void() {
+  int epidx = CkRegisterEp("start()",
+      reinterpret_cast<CkCallFnPtr>(_call_start_void), 0, __idx, 0);
   return epidx;
 }
 
-void CkIndex_Prefix::_call_phase_marshall4(void* impl_msg, void* impl_obj_void)
+void CkIndex_Prefix::_call_start_void(void* impl_msg, void* impl_obj_void)
 {
   Prefix* impl_obj = static_cast<Prefix*>(impl_obj_void);
-  CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
-  char *impl_buf=impl_msg_typed->msgBuf;
-  envelope *env = UsrToEnv(impl_msg_typed);
-  /*Unmarshall pup'd fields: int phase*/
-  PUP::fromMem implP(impl_buf);
-  PUP::detail::TemporaryObjectHolder<int> phase;
-  implP|phase;
-  impl_buf+=CK_ALIGN(implP.size(),16);
-  /*Unmarshall arrays:*/
-  impl_obj->phase(std::move(phase.t));
+  impl_obj->start();
+  if(UsrToEnv(impl_msg)->isVarSysMsg() == 0)
+    CkFreeSysMsg(impl_msg);
 }
-int CkIndex_Prefix::_callmarshall_phase_marshall4(char* impl_buf, void* impl_obj_void) {
-  Prefix* impl_obj = static_cast<Prefix*>(impl_obj_void);
-  envelope *env = UsrToEnv(impl_buf);
-  /*Unmarshall pup'd fields: int phase*/
-  PUP::fromMem implP(impl_buf);
-  PUP::detail::TemporaryObjectHolder<int> phase;
-  implP|phase;
-  impl_buf+=CK_ALIGN(implP.size(),16);
-  /*Unmarshall arrays:*/
-  impl_obj->phase(std::move(phase.t));
-  return implP.size();
-}
-void CkIndex_Prefix::_marshallmessagepup_phase_marshall4(PUP::er &implDestP,void *impl_msg) {
-  CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
-  char *impl_buf=impl_msg_typed->msgBuf;
-  envelope *env = UsrToEnv(impl_msg_typed);
-  /*Unmarshall pup'd fields: int phase*/
-  PUP::fromMem implP(impl_buf);
-  PUP::detail::TemporaryObjectHolder<int> phase;
-  implP|phase;
-  impl_buf+=CK_ALIGN(implP.size(),16);
-  /*Unmarshall arrays:*/
-  if (implDestP.hasComments()) implDestP.comment("phase");
-  implDestP|phase;
-}
-PUPable_def(SINGLE_ARG(Closure_Prefix::phase_4_closure))
+PUPable_def(SINGLE_ARG(Closure_Prefix::start_4_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
-/* DEFS: void passValue(int phase, int value);
+/* DEFS: void phase();
  */
-void CProxy_Prefix::passValue(int phase, int value, const CkEntryOptions *impl_e_opts) 
+void CProxy_Prefix::phase(const CkEntryOptions *impl_e_opts) 
 {
   ckCheck();
-  //Marshall: int phase, int value
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
+  UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
+  CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
+  impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
+  ckBroadcast(impl_amsg, CkIndex_Prefix::idx_phase_void(),0);
+}
+
+// Entry point registration function
+int CkIndex_Prefix::reg_phase_void() {
+  int epidx = CkRegisterEp("phase()",
+      reinterpret_cast<CkCallFnPtr>(_call_phase_void), 0, __idx, 0);
+  return epidx;
+}
+
+void CkIndex_Prefix::_call_phase_void(void* impl_msg, void* impl_obj_void)
+{
+  Prefix* impl_obj = static_cast<Prefix*>(impl_obj_void);
+  impl_obj->phase();
+  if(UsrToEnv(impl_msg)->isVarSysMsg() == 0)
+    CkFreeSysMsg(impl_msg);
+}
+PUPable_def(SINGLE_ARG(Closure_Prefix::phase_5_closure))
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifndef CK_TEMPLATES_ONLY
+/* DEFS: void passValue(int Phase, int Value);
+ */
+void CProxy_Prefix::passValue(int Phase, int Value, const CkEntryOptions *impl_e_opts) 
+{
+  ckCheck();
+  //Marshall: int Phase, int Value
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
-    implP|phase;
-    implP|value;
+    implP|Phase;
+    implP|Value;
     impl_off+=implP.size();
   }
   CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
   { //Copy over the PUP'd data
     PUP::toMem implP((void *)impl_msg->msgBuf);
-    implP|phase;
-    implP|value;
+    implP|Phase;
+    implP|Value;
   }
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
   CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
   impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
-  ckBroadcast(impl_amsg, CkIndex_Prefix::idx_passValue_marshall5(),0);
+  ckBroadcast(impl_amsg, CkIndex_Prefix::idx_passValue_marshall6(),0);
 }
 
 // Entry point registration function
-int CkIndex_Prefix::reg_passValue_marshall5() {
-  int epidx = CkRegisterEp("passValue(int phase, int value)",
-      reinterpret_cast<CkCallFnPtr>(_call_passValue_marshall5), CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
-  CkRegisterMarshallUnpackFn(epidx, _callmarshall_passValue_marshall5);
-  CkRegisterMessagePupFn(epidx, _marshallmessagepup_passValue_marshall5);
+int CkIndex_Prefix::reg_passValue_marshall6() {
+  int epidx = CkRegisterEp("passValue(int Phase, int Value)",
+      reinterpret_cast<CkCallFnPtr>(_call_passValue_marshall6), CkMarshallMsg::__idx, __idx, 0+CK_EP_NOKEEP);
+  CkRegisterMarshallUnpackFn(epidx, _callmarshall_passValue_marshall6);
+  CkRegisterMessagePupFn(epidx, _marshallmessagepup_passValue_marshall6);
 
   return epidx;
 }
 
-void CkIndex_Prefix::_call_passValue_marshall5(void* impl_msg, void* impl_obj_void)
+void CkIndex_Prefix::_call_passValue_marshall6(void* impl_msg, void* impl_obj_void)
 {
   Prefix* impl_obj = static_cast<Prefix*>(impl_obj_void);
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
   envelope *env = UsrToEnv(impl_msg_typed);
-  /*Unmarshall pup'd fields: int phase, int value*/
+  /*Unmarshall pup'd fields: int Phase, int Value*/
   PUP::fromMem implP(impl_buf);
-  PUP::detail::TemporaryObjectHolder<int> phase;
-  implP|phase;
-  PUP::detail::TemporaryObjectHolder<int> value;
-  implP|value;
+  PUP::detail::TemporaryObjectHolder<int> Phase;
+  implP|Phase;
+  PUP::detail::TemporaryObjectHolder<int> Value;
+  implP|Value;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  impl_obj->passValue(std::move(phase.t), std::move(value.t));
+  impl_obj->passValue(std::move(Phase.t), std::move(Value.t));
 }
-int CkIndex_Prefix::_callmarshall_passValue_marshall5(char* impl_buf, void* impl_obj_void) {
+int CkIndex_Prefix::_callmarshall_passValue_marshall6(char* impl_buf, void* impl_obj_void) {
   Prefix* impl_obj = static_cast<Prefix*>(impl_obj_void);
   envelope *env = UsrToEnv(impl_buf);
-  /*Unmarshall pup'd fields: int phase, int value*/
+  /*Unmarshall pup'd fields: int Phase, int Value*/
   PUP::fromMem implP(impl_buf);
-  PUP::detail::TemporaryObjectHolder<int> phase;
-  implP|phase;
-  PUP::detail::TemporaryObjectHolder<int> value;
-  implP|value;
+  PUP::detail::TemporaryObjectHolder<int> Phase;
+  implP|Phase;
+  PUP::detail::TemporaryObjectHolder<int> Value;
+  implP|Value;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  impl_obj->passValue(std::move(phase.t), std::move(value.t));
+  impl_obj->passValue(std::move(Phase.t), std::move(Value.t));
   return implP.size();
 }
-void CkIndex_Prefix::_marshallmessagepup_passValue_marshall5(PUP::er &implDestP,void *impl_msg) {
+void CkIndex_Prefix::_marshallmessagepup_passValue_marshall6(PUP::er &implDestP,void *impl_msg) {
   CkMarshallMsg *impl_msg_typed=(CkMarshallMsg *)impl_msg;
   char *impl_buf=impl_msg_typed->msgBuf;
   envelope *env = UsrToEnv(impl_msg_typed);
-  /*Unmarshall pup'd fields: int phase, int value*/
+  /*Unmarshall pup'd fields: int Phase, int Value*/
   PUP::fromMem implP(impl_buf);
-  PUP::detail::TemporaryObjectHolder<int> phase;
-  implP|phase;
-  PUP::detail::TemporaryObjectHolder<int> value;
-  implP|value;
+  PUP::detail::TemporaryObjectHolder<int> Phase;
+  implP|Phase;
+  PUP::detail::TemporaryObjectHolder<int> Value;
+  implP|Value;
   impl_buf+=CK_ALIGN(implP.size(),16);
   /*Unmarshall arrays:*/
-  if (implDestP.hasComments()) implDestP.comment("phase");
-  implDestP|phase;
-  if (implDestP.hasComments()) implDestP.comment("value");
-  implDestP|value;
+  if (implDestP.hasComments()) implDestP.comment("Phase");
+  implDestP|Phase;
+  if (implDestP.hasComments()) implDestP.comment("Value");
+  implDestP|Value;
 }
-PUPable_def(SINGLE_ARG(Closure_Prefix::passValue_5_closure))
+PUPable_def(SINGLE_ARG(Closure_Prefix::passValue_6_closure))
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
@@ -892,54 +953,57 @@ void CProxySection_Prefix::write(const std::string &impl_noname_1, const CkEntry
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
-/* DEFS: void phase(int phase);
+/* DEFS: void start();
  */
-void CProxySection_Prefix::phase(int phase, const CkEntryOptions *impl_e_opts) 
+void CProxySection_Prefix::start(const CkEntryOptions *impl_e_opts) 
 {
   ckCheck();
-  //Marshall: int phase
-  int impl_off=0;
-  { //Find the size of the PUP'd data
-    PUP::sizer implP;
-    implP|phase;
-    impl_off+=implP.size();
-  }
-  CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
-  { //Copy over the PUP'd data
-    PUP::toMem implP((void *)impl_msg->msgBuf);
-    implP|phase;
-  }
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
   CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
   impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
-  ckSend(impl_amsg, CkIndex_Prefix::idx_phase_marshall4(),0);
+  ckSend(impl_amsg, CkIndex_Prefix::idx_start_void(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
 #ifndef CK_TEMPLATES_ONLY
-/* DEFS: void passValue(int phase, int value);
+/* DEFS: void phase();
  */
-void CProxySection_Prefix::passValue(int phase, int value, const CkEntryOptions *impl_e_opts) 
+void CProxySection_Prefix::phase(const CkEntryOptions *impl_e_opts) 
 {
   ckCheck();
-  //Marshall: int phase, int value
+  void *impl_msg = CkAllocSysMsg(impl_e_opts);
+  UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
+  CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
+  impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
+  ckSend(impl_amsg, CkIndex_Prefix::idx_phase_void(),0);
+}
+#endif /* CK_TEMPLATES_ONLY */
+
+#ifndef CK_TEMPLATES_ONLY
+/* DEFS: void passValue(int Phase, int Value);
+ */
+void CProxySection_Prefix::passValue(int Phase, int Value, const CkEntryOptions *impl_e_opts) 
+{
+  ckCheck();
+  //Marshall: int Phase, int Value
   int impl_off=0;
   { //Find the size of the PUP'd data
     PUP::sizer implP;
-    implP|phase;
-    implP|value;
+    implP|Phase;
+    implP|Value;
     impl_off+=implP.size();
   }
   CkMarshallMsg *impl_msg=CkAllocateMarshallMsg(impl_off,impl_e_opts);
   { //Copy over the PUP'd data
     PUP::toMem implP((void *)impl_msg->msgBuf);
-    implP|phase;
-    implP|value;
+    implP|Phase;
+    implP|Value;
   }
   UsrToEnv(impl_msg)->setMsgtype(ForArrayEltMsg);
   CkArrayMessage *impl_amsg=(CkArrayMessage *)impl_msg;
   impl_amsg->array_setIfNotThere(CkArray_IfNotThere_buffer);
-  ckSend(impl_amsg, CkIndex_Prefix::idx_passValue_marshall5(),0);
+  ckSend(impl_amsg, CkIndex_Prefix::idx_passValue_marshall6(),0);
 }
 #endif /* CK_TEMPLATES_ONLY */
 
@@ -965,11 +1029,14 @@ void CkIndex_Prefix::__register(const char *s, size_t size) {
   // REG: void write(const std::string &impl_noname_1);
   idx_write_marshall3();
 
-  // REG: void phase(int phase);
-  idx_phase_marshall4();
+  // REG: void start();
+  idx_start_void();
 
-  // REG: void passValue(int phase, int value);
-  idx_passValue_marshall5();
+  // REG: void phase();
+  idx_phase_void();
+
+  // REG: void passValue(int Phase, int Value);
+  idx_passValue_marshall6();
 
   // REG: Prefix(CkMigrateMessage* impl_msg);
   idx_Prefix_CkMigrateMessage();
@@ -995,6 +1062,7 @@ void _registerprefix(void)
 /* REG: mainchare Main: Chare{
 Main(CkArgMsg* impl_msg);
 void done();
+void finishLoading();
 };
 */
   CkIndex_Main::__register("Main", sizeof(Main));
@@ -1003,8 +1071,9 @@ void done();
 Prefix();
 void receive(const std::vector<int> &impl_noname_0);
 void write(const std::string &impl_noname_1);
-void phase(int phase);
-void passValue(int phase, int value);
+void start();
+void phase();
+void passValue(int Phase, int Value);
 Prefix(CkMigrateMessage* impl_msg);
 };
 */

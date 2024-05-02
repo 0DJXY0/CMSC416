@@ -1,0 +1,25 @@
+
+
+mainmodule prefix {
+    readonly CProxy_Main mainProxy;
+    readonly int numChares;
+    readonly CProxy_Prefix prefixArray;
+    readonly int numPhases;
+    readonly int numDone;
+
+    mainchare Main {
+        entry Main(CkArgMsg*);
+        entry void done(void);
+	entry void finishLoading(void);
+    };
+
+    array [1D] Prefix {
+        entry Prefix(void);
+	entry void receive(std::vector<int>);
+	entry void write(std::string);
+	entry void start(void);
+        entry void phase(void);
+        entry void passValue(int Phase, int Value);
+	
+    };
+};

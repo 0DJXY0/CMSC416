@@ -3,7 +3,7 @@
 import numpy as np
 
 if __name__ == "__main__":
-    input_arr = np.random.randint(low=1, high=100, size = 131072)
+    input_arr = np.random.randint(low=1, high=100, size = 1000000)
     print(input_arr)
 
     with open("sample-input.data", "w") as infile:

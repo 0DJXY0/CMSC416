@@ -14,13 +14,12 @@
 
 class Main: public CBase_Main {
 private:
-  //numChares = atoi(msg->argv[2]);
   std::string output_file_name;
   double start_time;
   double end_time;
+  int received = 0;
 public:
   Main(CkArgMsg* msg){
-    
     std::string input_file_name = (msg->argv[1]);
     numChares =  atoi(msg->argv[2]);
     output_file_name = (msg->argv[3]);
@@ -29,9 +28,6 @@ public:
     prefixArray = CProxy_Prefix::ckNew(numChares);
     std::ifstream input_file;
     input_file.open(input_file_name);
-    if (!input_file.is_open()){
-      std::cerr << "Failed to open file\n";
-    }
     std::string line;
     std::vector<int> numbers;
     while (input_file >> line) {
@@ -40,33 +36,39 @@ public:
       numbers.push_back(number);
     }
     input_file.close();
-    std::cout << "total number of inputs: " << numbers.size() << "\n";
     int grid_size = numbers.size()/numChares;
     numPhases = 0;
     while (pow(2,numPhases) < numChares){
 	numPhases++;
     }
-    start_time = CkWallTimer();  
     for (int i=0;i<numChares;i++){
       std::vector<int> subtask(numbers.begin()+i*grid_size,numbers.begin()+(i+1)*grid_size);
-      std::cout << subtask[0] << endl;
       if (i == numChares-1){
 	std::vector<int> subtask(numbers.begin()+i*grid_size,numbers.end());
       }
       prefixArray[i].receive(subtask);
     }
-    std::cout << "I do nothing\n" << endl;
-    mainProxy.done();
   }
-  void done(void){
-    //std::ofstream output_file;
-    //output_file.open(output_file_name);
-    end_time = CkWallTimer();
-    std::cout << "Time taken: " << (end_time - start_time) << "\n";
-    prefixArray[0].write(output_file_name);
+  
+  void finishLoading(){
     
-    //ckout << "All done" << endl;
-    //CkExit();
+    received++;
+    if (received == numChares){
+      start_time = CkWallTimer();
+      for (int i=0;i<numChares;i++){
+	prefixArray[i].start();
+      }
+    }
+    
+  }
+  		 
+  void done(void){
+    numDone = numDone+1;
+    if (numDone == numChares){
+      end_time = CkWallTimer();
+      std::cout << "TIME: " << (end_time - start_time) << " s\n";
+      prefixArray[0].write(output_file_name);      
+    }       
   }
   
   
@@ -81,8 +83,8 @@ private:
   int length_subtask = 0;
   int current_value = 0;
   int numWait = 0;
-  int received = 0;
-  std::vector<int>buffer;
+  int AllReceived = 0;
+  std::unordered_map<int,int> waitlist;
 public:
   Prefix(void){
   }
@@ -91,84 +93,75 @@ public:
     
     subtask = array;
     length_subtask = subtask.size();
-    //std::cout << thisIndex << "has length " << length_subtask << "\n";
     for (int i=1;i<length_subtask;i++){
       subtask[i] = subtask[i] + subtask[i-1];
-      //if (thisIndex == 0){
-      //std::cout << subtask[i] << "\n"; }
     }
     current_value = subtask[length_subtask-1];
-    int index = thisIndex + 1;
-    while (index >>= 1) ++numWait;
-    //std::cout << "chare " << thisIndex << " start phase 0\n" ;
-    phase(0);  
+    if (thisIndex > 0){
+      double log2N = std::log2(thisIndex);
+      numWait = std::floor(log2N) + 1;
+    }
+    mainProxy.finishLoading();
+    //std::cout << "chare " << thisIndex << " need to wait " << numWait << "times\n" ;
   }
-
+  void start(){
+    if (thisIndex < numChares - 1) prefixArray[thisIndex + 1].passValue(0,current_value);
+    if (thisIndex == 0){
+      prefixArray[thisIndex].phase();
+    }
+  }
   void write(std::string output_file_name){
-    //int index = thisIndex + 1;
-    //while (index >>= 1) ++numWait;
-    //std::cout << thisIndex << "has to wait " << numWait << "times" << "\n";
     std::ofstream output_file;
     output_file.open(output_file_name, std::ofstream::app);
-    //std::cout << "Chare " << thisIndex << " is writing\n" << endl;
     for (int i=0;i<length_subtask;i++){
       output_file << subtask[i] << "\n";
     }
-    //std::cout << thisIndex << " has length " << length_subtask << "\n" << endl;
     output_file.close();
     if (thisIndex != numChares-1){
       prefixArray[thisIndex + 1].write(output_file_name);
     }
     else{
-      //output_file.close();
-      std::cout << "All done\n" << endl;
       CkExit();
     }
+ 
   }
-  
-  void phase(int current_phase){
-    
-    int targetIndex = thisIndex + (1 << current_phase);
-    //std::cout << "Chare " << thisIndex << "received " << received << "current pahse is " << current_phase << "\n";
-    //if (received >= current_phase){
-      
-      
-    if (targetIndex < numChares){
-      std::cout << "this Chare: "<< thisIndex << " target: " << targetIndex << " current_phase: " << current_phase << " num received: " << received << " should wait: " << numWait << "\n";
-      prefixArray[targetIndex].passValue(current_phase, current_value);
-      if (received == numWait){
-	if (current_phase < numPhases) phase(current_phase+1);
-	else numDone++; 
+  void phase(){
+    if(current_phase < numWait){
+      auto key = waitlist.find(current_phase);
+      while (key != waitlist.end()){
+	int value = waitlist.at(current_phase);
+	for (int i=0;i<length_subtask;i++){
+	  subtask[i] = subtask[i] + value;
+	}
+	waitlist.erase(current_phase);
+	current_phase = current_phase + 1;
+	int targetIndex = thisIndex + (1 << current_phase);
+	if(targetIndex < numChares){
+	  current_value = subtask[length_subtask-1];
+	  prefixArray[targetIndex].passValue(current_phase,current_value);
+	}
+	key = waitlist.find(current_phase);
       }
-	    
     }
-    else{
-      if (current_phase == numPhases){
-      numDone++;
-      if (numDone == numChares) mainProxy.done();
-      }      
-    }    
-    //}
-
-    
+    if(current_phase >= numWait && AllReceived == 0){
+      AllReceived = 1;
+      current_phase = current_phase + 1;
+      int targetIndex = thisIndex + (1 << current_phase);
+      while (targetIndex < numChares){
+	current_value = subtask[length_subtask-1];
+	prefixArray[targetIndex].passValue(current_phase, current_value);
+	current_phase = current_phase + 1;
+	targetIndex = thisIndex + (1 << current_phase);
+      }
+      mainProxy.done();
+    }
   }
 
-  void passValue(int Myphase, int value){     
-    //std::cout << "Chare " << thisIndex << " is passed value " << "receive " << received << " Myphase is " << Myphase << "total phase: "<< numPhases <<"\n";
-  for (int i=0;i<length_subtask;i++){
-      subtask[i] = subtask[i] + value;
-    }
-  received ++;
-  //std::cout << "Chare " << thisIndex << " is passed value " << "receive " << received << " Myphase is " << Myphase << "total phase: "<< numPhases <<"\n";
-  current_phase = Myphase + 1;
-  current_value = subtask[length_subtask-1];
-  std::cout << "Chare " << thisIndex << " is passed value " << "receive " << received << " current phase is "<< Myphase << " Next phase is " << current_phase << " total phase: "<< numPhases <<"\n";
-  phase(current_phase);
+  void passValue(int Phase, int Value){     
+    waitlist.emplace(Phase,Value);
+    prefixArray[thisIndex].phase();
+  }
   
-     
-  }
-      
-    
 };
 
   
