@@ -103,29 +103,32 @@ void compute(int **life, int **previous_life, int X_limit, int Y_limit) {
 int main(int argc, char *argv[]) {
 
 
-    if (argc != 5)
-        perror("Expected arguments: ./life <input_file> <num_of_generations> <X_limit> <Y_limit>");
+    if (argc != 7)
+        perror("Expected arguments: ./life <input_file> <num_of_generations> <X_limit> <Y_limit> <X dim> <Y dim>");
  
     string input_file_name = argv[1];
     int num_of_generations = stoi(argv[2]);
     int X_limit = stoi(argv[3]);
     int Y_limit = stoi(argv[4]);
+    int Xprocs = stoi(argv[5]);
+    int Yprocs = stoi(argv[6]);
+    int xsize = X_limit/Xprocs;
+    int ysize = Y_limit/Yprocs;
 
-    int interval, myid, numprocs;
+    int myid, numprocs;
     int namelen;
     char processor_name[MPI_MAX_PROCESSOR_NAME];
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-    interval = X_limit/numprocs;
     MPI_Status status;
-    MPI_Request requests[4];
+    MPI_Request requests[8];
     int *sendbuf = (int*)malloc(X_limit*Y_limit*sizeof(int));
-    int rbuf[interval*Y_limit];
+    int rbuf[xsize*ysize];
     int ind;
     double starttime, endtime, localtime;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
       requests[i] = MPI_REQUEST_NULL;
     }
 
@@ -139,63 +142,105 @@ int main(int argc, char *argv[]) {
       }
       read_input_file(life, input_file_name);
      
-      
-      for (int i = 0; i < X_limit; i++) {
-	for (int j = 0; j < Y_limit; j++) {
-	  ind = i*Y_limit + j;
-	  sendbuf[ind] = life[i][j];
-	}
-      }
-      
-    }
 
-    int **previous_block = new int *[interval+2];
-    for (int i = 0; i < interval+2; i++) {
-      previous_block[i] = new int[Y_limit+2];
-      for (int j = 0; j < Y_limit+2; j++) {
+      for (int xx = 0; xx < Xprocs; xx++){
+	//cout << "row " << xx << " start\n";
+	for (int yy = 0; yy < Yprocs; yy++){
+	  //for (int index = 0; index < xsize*ysize; index++) {	    
+	  for (int i = 0; i < xsize; i++){
+	    for (int j = 0; j < ysize; j++){
+	    //ind = (xx*Yprocs + yy)*xsize*ysize + index;
+	    //int i = xx*xsize + (ind/ysize - (xx*Yprocs + yy)*xsize);
+	    //int j = yy*ysize + ind%ysize;
+	    //cout << "ind: "<< ind << " indices: " << i << ' ' << j << " \n";
+	      ind = (xx*Yprocs + yy)*xsize*ysize + (i*ysize + j);
+	      //if (xx*xsize + i == 4 &&yy*ysize + j < ysize){
+		//cout << "ind: "<< ind << " indices: " << xx << ' ' << yy << ' ' << xx*xsize + i << ' ' << yy*ysize + j << ' ' << life[xx*xsize + i][yy*ysize + j] << " \n";}
+	      sendbuf[ind] = life[xx*xsize + i][yy*ysize + j];
+	    }
+	  }
+	}
+      }  
+    }
+    int **previous_block = new int *[xsize+2];
+    for (int i = 0; i < xsize+2; i++) {
+      previous_block[i] = new int[ysize+2];
+      for (int j = 0; j < ysize+2; j++) {
 	previous_block[i][j] = 0;
       }
     }
     
-    MPI_Scatter(sendbuf,interval*Y_limit,MPI_INT,rbuf,interval*Y_limit,MPI_INT,0,MPI_COMM_WORLD);
+    MPI_Scatter(sendbuf,xsize*ysize,MPI_INT,rbuf,xsize*ysize,MPI_INT,0,MPI_COMM_WORLD);
 
-    int **block = new int *[interval];
-    for (int i = 0; i < interval; i++) {
-      block[i] = new int[Y_limit];
-      for (int j = 0; j < Y_limit; j++) {
-	ind = i*Y_limit + j;
+    int **block = new int *[xsize];
+    for (int i = 0; i < xsize; i++) {
+      block[i] = new int[ysize];
+      for (int j = 0; j < ysize; j++) {
+	ind = i*ysize + j;
 	block[i][j] = rbuf[ind];
       }
       
     }
-    int *data1 = new int[Y_limit];
-    int *data2 = new int[Y_limit];
+    int *ydata1 = new int[ysize];
+    int *ydata2 = new int[ysize];
+    int *xdata1 = new int[xsize];
+    int *xdata2 = new int[xsize];
+    int *xsend1 = new int[xsize];
+    int *xsend2 = new int[xsize];
 
     MPI_Barrier(MPI_COMM_WORLD);
     starttime = MPI_Wtime();
-    
+    //num_of_generations = 2;
     for (int numg = 0; numg < num_of_generations; numg++) {
-      if (myid!=0){
-	MPI_Irecv(data2, Y_limit, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[0]);
-	MPI_Isend(block[0], Y_limit, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[1]);
+      //if not first row
+      if (myid >= Yprocs){
+	//cout << "id: " << myid << "\n";
+	MPI_Irecv(ydata2, ysize, MPI_INT, myid-Yprocs, 0, MPI_COMM_WORLD, &requests[0]);	    
+	MPI_Isend(block[0], ysize, MPI_INT, myid-Yprocs, 0, MPI_COMM_WORLD, &requests[1]);
       }
-      if (myid!=numprocs-1){
-	MPI_Irecv(data1, Y_limit, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[2]);
-	MPI_Isend(block[interval-1], Y_limit, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[3]);
+      if (myid<numprocs-Yprocs){	
+	MPI_Irecv(ydata1, ysize, MPI_INT, myid+Yprocs, 0, MPI_COMM_WORLD, &requests[2]);
+	MPI_Isend(block[xsize-1], ysize, MPI_INT, myid+Yprocs, 0, MPI_COMM_WORLD, &requests[3]);
       }
-      if (myid!=numprocs-1){
+      if (myid % Yprocs != 0){
+	MPI_Irecv(xdata2, xsize, MPI_INT, myid-1, 0, MPI_COMM_WORLD,&requests[4]);
+	for (int i=0;i<xsize;i++){
+	  xsend1[i] = block[i][0];
+	}
+	MPI_Isend(xsend1, xsize, MPI_INT, myid-1, 0, MPI_COMM_WORLD, &requests[5]);
+      }
+      if(myid % Yprocs !=Yprocs-1){
+	MPI_Irecv(xdata1, xsize, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[6]);
+	for (int i=0;i<xsize;i++){
+	  xsend2[i] = block[i][ysize-1];
+	}
+	MPI_Isend(xsend2, xsize, MPI_INT, myid+1, 0, MPI_COMM_WORLD, &requests[7]);
+      }
+      if (myid<numprocs - Yprocs){
 	MPI_Wait(&requests[2],MPI_SUCCESS);
+        for (int i = 0; i < ysize; i++) {
+          previous_block[xsize+1][i+1] = ydata1[i];}
 	MPI_Wait(&requests[3],MPI_SUCCESS);
-	for (int i = 0; i < Y_limit; i++) {
-	  previous_block[interval+1][i+1] = data1[i];}
       }
-      if (myid!=0){
+      if (myid>=Yprocs){
 	MPI_Wait(&requests[0],MPI_SUCCESS);
+	for (int i = 0; i < ysize; i++) {
+          previous_block[0][i+1] = ydata2[i];}
 	MPI_Wait(&requests[1],MPI_SUCCESS);
-	for (int i = 0; i < Y_limit; i++) {
-	  previous_block[0][i+1] = data2[i];}
-      }     
-      compute(block,previous_block,interval,Y_limit);  
+      }
+      if (myid % Yprocs !=0){
+	MPI_Wait(&requests[4],MPI_SUCCESS);
+	for (int i = 0; i < xsize; i++) {
+          previous_block[i+1][0] = xdata2[i];}
+        MPI_Wait(&requests[5],MPI_SUCCESS);
+      }
+      if (myid % Yprocs != Yprocs-1){
+	MPI_Wait(&requests[6],MPI_SUCCESS);
+	for (int i = 0; i < xsize; i++) {
+          previous_block[i+1][ysize+1] = xdata1[i];}
+        MPI_Wait(&requests[7],MPI_SUCCESS);
+      }
+      compute(block,previous_block,xsize,ysize);  
     }
     
     endtime = MPI_Wtime();
@@ -206,33 +251,46 @@ int main(int argc, char *argv[]) {
     MPI_Reduce(&localtime,&min,1,MPI_DOUBLE,MPI_MIN,0,MPI_COMM_WORLD);
     avg = avg/numprocs;
     
-    for (int i = 0; i < interval; i++) {
-      for (int j = 0; j < Y_limit; j++) {
-        ind = i*Y_limit + j;
+    for (int i = 0; i < xsize; i++) {
+      for (int j = 0; j < ysize; j++) {
+        ind = i*ysize + j;
+	//cout << rbuf[ind] << "\n";
         rbuf[ind] = block[i][j];
       }
     }
-    MPI_Gather(rbuf, interval*Y_limit, MPI_INT,sendbuf, interval*Y_limit, MPI_INT, 0, MPI_COMM_WORLD);    
+    MPI_Gather(rbuf, xsize*ysize, MPI_INT,sendbuf, xsize*ysize, MPI_INT, 0, MPI_COMM_WORLD);    
     if (myid == 0){
       int **life = new int *[X_limit];
       for (int i = 0; i < X_limit; i++) {
         life[i] = new int[Y_limit];
 	for (int j = 0; j < Y_limit; j++) {
-	  ind = i*Y_limit + j;
-	  life[i][j] = sendbuf[ind];
+	  life[i][j] = 0;
 	}
       }
+      cout << "prepare output";
+      for (int xx = 0; xx < Xprocs; xx++) {
+        for (int yy = 0; yy < Yprocs; yy++) {
+	  for (int i = 0; i < xsize; i++){
+	    for (int j = 0; j < ysize; j++){
+	      ind = (xx*Yprocs + yy)*xsize*ysize + (i*ysize + j);
+	      //cout << ind << ' '<< xx << ' ' << yy << ' ' << i << ' ' << j << ' ' << sendbuf[ind] << " \n";
+	      life[xx*xsize + i][yy*ysize + j] = sendbuf[ind];	      
+	    }
+	  }
+	}
+      }
+      
       cout << "TIME: Min: " <<  min  << " s Avg: " << avg  << " s Max: " << max << " s\n";
 
        write_output(life, X_limit, Y_limit, input_file_name, num_of_generations);
     }
     
     MPI_Finalize();
-    for (int i = 0; i < interval; i++) {
+    for (int i = 0; i < xsize; i++) {
       delete block[i];
     }
 
-    for (int i = 0; i < interval+2; i++) {
+    for (int i = 0; i < xsize+2; i++) {
       delete previous_block[i];
     }
     
