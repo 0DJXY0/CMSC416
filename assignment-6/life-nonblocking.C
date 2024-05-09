@@ -160,8 +160,7 @@ int main(int argc, char *argv[]) {
 	    }
 	  }
 	}
-      }
-      cout << "finish reading\n";  
+      }  
     }
     int **previous_block = new int *[xsize+2];
     for (int i = 0; i < xsize+2; i++) {
@@ -191,7 +190,7 @@ int main(int argc, char *argv[]) {
 
     MPI_Barrier(MPI_COMM_WORLD);
     starttime = MPI_Wtime();
-    //num_of_generations = 1;
+    //num_of_generations = 2;
     for (int numg = 0; numg < num_of_generations; numg++) {
       //if not first row
       if (myid >= Yprocs){
@@ -219,27 +218,27 @@ int main(int argc, char *argv[]) {
       }
       if (myid<numprocs - Yprocs){
 	MPI_Wait(&requests[2],MPI_SUCCESS);
+        for (int i = 0; i < ysize; i++) {
+          previous_block[xsize+1][i+1] = ydata1[i];}
 	MPI_Wait(&requests[3],MPI_SUCCESS);
-	for (int i = 0; i < ysize; i++) {
-	  previous_block[xsize+1][i+1] = ydata1[i];}
       }
       if (myid>=Yprocs){
 	MPI_Wait(&requests[0],MPI_SUCCESS);
-	MPI_Wait(&requests[1],MPI_SUCCESS);
 	for (int i = 0; i < ysize; i++) {
-	  previous_block[0][i+1] = ydata2[i];}
+          previous_block[0][i+1] = ydata2[i];}
+	MPI_Wait(&requests[1],MPI_SUCCESS);
       }
       if (myid % Yprocs !=0){
 	MPI_Wait(&requests[4],MPI_SUCCESS);
+	for (int i = 0; i < xsize; i++) {
+          previous_block[i+1][0] = xdata2[i];}
         MPI_Wait(&requests[5],MPI_SUCCESS);
-        for (int i = 0; i < xsize; i++) {
-          previous_block[i][0] = xdata2[i];}
       }
       if (myid % Yprocs != Yprocs-1){
 	MPI_Wait(&requests[6],MPI_SUCCESS);
+	for (int i = 0; i < xsize; i++) {
+          previous_block[i+1][ysize+1] = xdata1[i];}
         MPI_Wait(&requests[7],MPI_SUCCESS);
-        for (int i = 0; i < xsize; i++) {
-          previous_block[i][ysize+1] = xdata1[i];}
       }
       compute(block,previous_block,xsize,ysize);  
     }

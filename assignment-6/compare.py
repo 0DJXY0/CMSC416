@@ -6,8 +6,8 @@ import sys
 
 file1 = sys.argv[1]
 file2 = sys.argv[2]
-file1 = "life.1.512x512.data"
-file2 = "life.1.512x512.500.csv"
+file1 = "life.1024x1024.serial.500.csv"
+file2 = "life.1024x1024.500.csv"
 print("begin comparing")
 with open(file1, "r") as f1, open(file2, "r") as f2:
         listx = []
